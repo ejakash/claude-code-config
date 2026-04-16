@@ -1,0 +1,21 @@
+# Per-machine reviewed-changelog tracking (never commit — it's local state)
+.changelog-status
+
+# Claude Code runtime state — never commit these
+config/history.jsonl
+config/backups/
+config/cache/
+config/downloads/
+config/file-history/
+config/mcp-needs-auth-cache.json
+config/paste-cache/
+config/plans/
+config/plugins/
+config/projects/
+config/session-env/
+config/sessions/
+config/shell-snapshots/
+config/subagents/
+config/tasks/
+config/telemetry/
+config/.credentials.json
