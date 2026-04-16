@@ -129,6 +129,11 @@
             "type": "command",
             "command": "agent-deck hook-handler",
             "async": true
+          },
+          {
+            "type": "command",
+            "command": "bash /home/pudge/.claude/hooks/notify-waiting.sh", // <-- edit per machine: WSL username (pudge)
+            "async": true
           }
         ]
       }
@@ -140,6 +145,10 @@
             "type": "command",
             "command": "agent-deck hook-handler",
             "async": true
+          },
+          {
+            "type": "command",
+            "command": "bash /home/pudge/.claude/hooks/clear-waiting.sh" // <-- edit per machine: WSL username (pudge)
           }
         ]
       }
