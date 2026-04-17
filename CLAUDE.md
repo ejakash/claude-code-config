@@ -37,13 +37,16 @@ config/                     — curated reference; mirrors ~/.claude/ layout
 
 `config/` mirrors the `~/.claude/` path layout exactly so copy paths are predictable.
 
+**Exception:** `config/windows-helpers/` holds Windows-side artifacts (PowerShell scripts, WezTerm Lua modules) that don't live under `~/.claude/` on any machine. They deploy to `C:\Users\<WIN_USER>\` on the Windows host. This is the documented exception to the mirror rule.
+
 ## Machine-Specific Values
 
 Files in `config/` use `# <-- edit per machine: <what>` (or `//` for JSON) to mark values that differ between machines. When applying to a new machine, ask for:
 
 - `YOUR_WSL_USER` — WSL username (e.g. `pudge`) — appears in hook command paths and statusLine path in `settings.json`
-- `YOUR_WIN_USER` — Windows username (e.g. `spirit`) — appears in `rules/dotnet.md` (jb.exe path) and `CLAUDE.md` (screenshot path)
+- `YOUR_WIN_USER` — Windows username (e.g. `spirit`) — appears in `rules/dotnet.md` (jb.exe path), `CLAUDE.md` (screenshot path), and `windows-helpers/claude-waiting.lua` (toast_script)
 - `YOUR_TIMEZONE` — local timezone for `statusline-command.sh` (e.g. `America/Chicago`)
+- `CLAUDE_AUMID` — Claude Desktop AppUserModelID (e.g. `Claude_pzs8sxrjxfjjc!Claude`, per-install hash) — appears in `windows-helpers/wezterm-claude-notify.ps1`. Discover via `powershell.exe Get-StartApps | ? Name -like '*Claude*'`, or run `config/windows-helpers/preflight.ps1`.
 
 Perform `sed` substitution before merging — do not commit machine-specific values.
 

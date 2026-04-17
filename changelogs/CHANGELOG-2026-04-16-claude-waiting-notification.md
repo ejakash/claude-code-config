@@ -1,8 +1,10 @@
 # CHANGELOG-2026-04-16-claude-waiting-notification
 
 **Date:** 2026-04-16
-**Tag:** [core]
+**Tag:** [optional]
 **Summary:** WezTerm-native notification system — tab amber, pane bg tint, Windows toast (with real Claude icon), auto-tab-switch + window raise when backgrounded, smart suppression when user is already on the waiting pane.
+
+> **Compatibility:** WSL2 + WezTerm on Windows 11 only. Requires Claude Desktop installed on Windows for the AUMID-spoofed toast icon. No-op / not applicable on native Windows PowerShell, macOS, or non-WezTerm terminals. Inside tmux: hooks skip themselves (process-tree pty routing is unreliable there).
 
 ## Goal
 
@@ -123,6 +125,12 @@ That's the full integration surface. The 140-line module does everything else.
 4. Merge hook entries into `~/.claude/settings.json` (`Stop` async, `UserPromptSubmit` sync).
 5. Wire the module into `C:\Users\<WIN_USER>\.wezterm.lua` per the three touch-points above (`dofile` + `apply()`, and the `format_tab_title_overlay` call inside the existing `format-tab-title` handler).
 6. WezTerm auto-reloads. First Stop event should trigger the pipeline.
+
+## Known limitations
+
+- **tmux / screen / nested ssh into WSL.** The hook exits silently when `$TMUX` is set — the process-tree walk can't reliably distinguish the hosting WezTerm pane's pts from whichever tmux client pty wins the race. Users running Claude Code directly in a WezTerm pane are unaffected.
+- **Multi-WezTerm-window raise by title match.** When multiple WezTerm windows are open and the backgrounded one needs to be raised, the PS1 matches `MainWindowTitle` against the calling window's active tab title. If two WezTerm windows happen to share that title, the first process wins (lowest PID). Rare in practice.
+- **AUMID is per-install.** If `wezterm-claude-notify.ps1` contains the wrong AUMID for this machine, `CreateToastNotifier` throws and the PS1 exits — `background_child_process` swallows the error, so the failure mode is "no toast appears, no visible error." Run `config/windows-helpers/preflight.ps1` to detect the right value.
 
 ## Verification
 
