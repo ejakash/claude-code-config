@@ -38,8 +38,7 @@ Clear triggers:         UserPromptSubmit hook   clear-waiting.sh → CLAUDE_WAIT
 
 **Linux side (`~/.claude/hooks/`):**
 
-- `notify-waiting.sh` — Stop hook. Walks process tree to find the pty, writes `\e]1337;SetUserVar=CLAUDE_WAITING=MQ==\a`. Nothing else.
-- `clear-waiting.sh` — UserPromptSubmit hook. Same tty walk, writes `=MA==`. Bg reset handled by Lua.
+- `notify-waiting.sh <1|0>` — single script used by both hooks. Walks the process tree to find the pane's pty and writes `\e]1337;SetUserVar=CLAUDE_WAITING=<base64>\a`. Stop hook calls it with `1`, UserPromptSubmit with `0`. No-op inside tmux (process-tree pty routing is unreliable there). Bg reset is handled by Lua's `user-var-changed` on value=0.
 
 **Windows side (`C:\Users\<WIN_USER>\`):**
 
@@ -53,10 +52,10 @@ Clear triggers:         UserPromptSubmit hook   clear-waiting.sh → CLAUDE_WAIT
 {
   "hooks": {
     "Stop": [{
-      "hooks": [{ "type": "command", "command": "bash /home/<WSL_USER>/.claude/hooks/notify-waiting.sh", "async": true }]
+      "hooks": [{ "type": "command", "command": "bash /home/<WSL_USER>/.claude/hooks/notify-waiting.sh 1", "async": true }]
     }],
     "UserPromptSubmit": [{
-      "hooks": [{ "type": "command", "command": "bash /home/<WSL_USER>/.claude/hooks/clear-waiting.sh" }]
+      "hooks": [{ "type": "command", "command": "bash /home/<WSL_USER>/.claude/hooks/notify-waiting.sh 0" }]
     }]
   }
 }
@@ -118,7 +117,7 @@ That's the full integration surface. The 140-line module does everything else.
 
 ## Deployment
 
-1. Copy hooks: `config/hooks/notify-waiting.sh` → `~/.claude/hooks/notify-waiting.sh`, same for `clear-waiting.sh`. `chmod +x` both.
+1. Copy the hook: `config/hooks/notify-waiting.sh` → `~/.claude/hooks/notify-waiting.sh`. `chmod +x`. (One script handles both Stop and UserPromptSubmit via a `1|0` arg.)
 2. Copy the PS1: `config/windows-helpers/wezterm-claude-notify.ps1` → `C:\Users\<WIN_USER>\.wezterm-claude-notify.ps1`. Edit the AUMID inside to match this machine's Claude Desktop install (see above).
 3. Copy the Lua module: `config/windows-helpers/claude-waiting.lua` → `C:\Users\<WIN_USER>\.wezterm-claude-waiting.lua`. Edit `M.toast_script` to substitute `<WIN_USER>`.
 4. Merge hook entries into `~/.claude/settings.json` (`Stop` async, `UserPromptSubmit` sync).
