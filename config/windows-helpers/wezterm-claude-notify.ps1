@@ -39,7 +39,10 @@ public class Win32 {
   # the oldest (first) process if nothing matches.
   $proc = $null
   if ($WindowTitle) {
-    $proc = $procs | Where-Object { $_.MainWindowTitle -like "*$WindowTitle*" } | Select-Object -First 1
+    # -like treats [, *, ? as wildcards. Tab titles commonly contain
+    # brackets (e.g. "[1]") and stars (vim dirty markers), so escape.
+    $pat = [System.Management.Automation.WildcardPattern]::Escape($WindowTitle)
+    $proc = $procs | Where-Object { $_.MainWindowTitle -like "*$pat*" } | Select-Object -First 1
   }
   if (-not $proc) { $proc = $procs | Select-Object -First 1 }
   if ($proc) {

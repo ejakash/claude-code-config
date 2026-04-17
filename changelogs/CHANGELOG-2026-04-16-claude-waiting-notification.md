@@ -30,7 +30,7 @@ WezTerm Lua             user-var-changed        decides: suppress or alert
                         ├─ window:focus()
                         └─ spawn toast PS1      .wezterm-claude-notify.ps1
 
-Clear triggers:         UserPromptSubmit hook   clear-waiting.sh → CLAUDE_WAITING=0
+Clear triggers:         UserPromptSubmit hook   notify-waiting.sh 0 → CLAUDE_WAITING=0
                         mouse Up Left binding   (click in pane)
                         update-status handler   (active-pane change)
                         user-var-changed 0      resets bg tint (single source)
@@ -104,7 +104,7 @@ That's the full integration surface. The 140-line module does everything else.
 ## Machine-specific values
 
 - `<WSL_USER>` — in hook paths in `~/.claude/settings.json`
-- `<WIN_USER>` — in `CLAUDE_TOAST_SCRIPT` Lua constant and the copy destination for `.wezterm-claude-notify.ps1`
+- `<WIN_USER>` — in `M.toast_script` (Lua module) and the copy destination for `.wezterm-claude-notify.ps1` + `.wezterm-claude-waiting.lua`. The committed `claude-waiting.lua` ships with the source machine's username literally (`spirit`) per repo convention — substitute at apply time.
 - **Claude Desktop AUMID** — the `Claude_pzs8sxrjxfjjc!Claude` literal in the PS1 is per-install. Find this machine's value with: `powershell.exe Get-StartApps | Where-Object Name -like '*Claude*'`.
 
 ## Key implementation notes

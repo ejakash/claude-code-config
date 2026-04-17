@@ -7,7 +7,7 @@
 # Prints:
 #   - Claude Desktop AUMID (for wezterm-claude-notify.ps1)
 #   - WezTerm version (feature requires background_child_process + is_focused)
-#   - Windows username (for the CLAUDE_TOAST_SCRIPT Lua path)
+#   - Windows username (for M.toast_script in the Lua module)
 # An onboarding agent can read this output and fill in the two
 # edit-per-machine slots automatically.
 

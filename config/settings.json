@@ -132,7 +132,7 @@
           },
           {
             "type": "command",
-            "command": "bash /home/pudge/.claude/hooks/notify-waiting.sh", // <-- edit per machine: WSL username (pudge)
+            "command": "bash /home/pudge/.claude/hooks/notify-waiting.sh 1", // <-- edit per machine: WSL username (pudge)
             "async": true
           }
         ]
@@ -148,7 +148,7 @@
           },
           {
             "type": "command",
-            "command": "bash /home/pudge/.claude/hooks/clear-waiting.sh" // <-- edit per machine: WSL username (pudge)
+            "command": "bash /home/pudge/.claude/hooks/notify-waiting.sh 0" // <-- edit per machine: WSL username (pudge)
           }
         ]
       }
