@@ -120,11 +120,32 @@ That's the full integration surface. The 140-line module does everything else.
 ## Deployment
 
 1. Copy the hook: `config/hooks/notify-waiting.sh` → `~/.claude/hooks/notify-waiting.sh`. `chmod +x`. (One script handles both Stop and UserPromptSubmit via a `1|0` arg.)
-2. Copy the PS1: `config/windows-helpers/wezterm-claude-notify.ps1` → `C:\Users\<WIN_USER>\.wezterm-claude-notify.ps1`. Edit the AUMID inside to match this machine's Claude Desktop install (see above).
-3. Copy the Lua module: `config/windows-helpers/claude-waiting.lua` → `C:\Users\<WIN_USER>\.wezterm-claude-waiting.lua`. Edit `M.toast_script` to substitute `<WIN_USER>`.
-4. Merge hook entries into `~/.claude/settings.json` (`Stop` async, `UserPromptSubmit` sync).
-5. Wire the module into `C:\Users\<WIN_USER>\.wezterm.lua` per the three touch-points above (`dofile` + `apply()`, and the `format_tab_title_overlay` call inside the existing `format-tab-title` handler).
-6. WezTerm auto-reloads. First Stop event should trigger the pipeline.
+2. Run the preflight probe to discover this machine's values:
+   ```powershell
+   powershell.exe -NoProfile -ExecutionPolicy Bypass -File config\windows-helpers\preflight.ps1
+   ```
+   It prints the Windows username, Claude Desktop AUMID, and WezTerm version — the three per-machine values you'll plug into steps 3 and 5.
+3. Copy the PS1: `config/windows-helpers/wezterm-claude-notify.ps1` → `C:\Users\<WIN_USER>\.wezterm-claude-notify.ps1`. Edit the AUMID inside to match this machine's Claude Desktop install (from preflight).
+4. Copy the Lua module: `config/windows-helpers/claude-waiting.lua` → `C:\Users\<WIN_USER>\.wezterm-claude-waiting.lua`. Edit `M.toast_script` to substitute `<WIN_USER>`.
+5. Merge hook entries into `~/.claude/settings.json` (`Stop` async, `UserPromptSubmit` sync).
+6. Wire the module into `C:\Users\<WIN_USER>\.wezterm.lua` per the three touch-points above (`dofile` + `apply()`, and the `format_tab_title_overlay` call inside the existing `format-tab-title` handler). If you don't already have a `.wezterm.lua`, the minimum skeleton is:
+   ```lua
+   local wezterm = require 'wezterm'
+   local config = wezterm.config_builder()
+
+   local claude_waiting = dofile("C:\\Users\\<WIN_USER>\\.wezterm-claude-waiting.lua")
+   claude_waiting.apply(config, wezterm)
+
+   wezterm.on("format-tab-title", function(tab, tabs, panes, cfg, hover, max_width)
+     local label = " " .. tab.tab_index + 1 .. ": " .. (tab.active_pane.title or "") .. " "
+     local overlay = claude_waiting.format_tab_title_overlay(wezterm, tab, label)
+     if overlay then return overlay end
+     return label
+   end)
+
+   return config
+   ```
+7. WezTerm auto-reloads. First Stop event should trigger the pipeline.
 
 ## Known limitations
 

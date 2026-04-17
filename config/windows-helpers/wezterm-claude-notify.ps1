@@ -16,7 +16,17 @@ $xml = New-Object Windows.Data.Xml.Dom.XmlDocument
 $xml.LoadXml("<toast><visual><binding template=`"ToastGeneric`"><text>Claude Code</text><text>$body</text></binding></visual></toast>")
 $t = [Windows.UI.Notifications.ToastNotification]::new($xml)
 # <-- edit per machine: Claude Desktop AUMID (discover via `powershell.exe Get-StartApps | ? Name -like '*Claude*'`)
-[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('Claude_pzs8sxrjxfjjc!Claude').Show($t)
+$aumid = 'Claude_pzs8sxrjxfjjc!Claude'
+try {
+  [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier($aumid).Show($t)
+} catch {
+  # background_child_process swallows stdout/stderr, but WezTerm's debug
+  # overlay captures stderr from spawned processes. Writing the failure
+  # there turns "no toast and no error" into a discoverable clue when
+  # the AUMID doesn't match this machine's Claude Desktop install.
+  [Console]::Error.WriteLine("wezterm-claude-notify: CreateToastNotifier('$aumid') failed: $($_.Exception.Message)")
+  [Console]::Error.WriteLine("Run config\windows-helpers\preflight.ps1 to discover the correct AUMID.")
+}
 
 # Raise WezTerm from a non-foreground process. Windows blocks plain
 # SetForegroundWindow here; the fake ALT tap bypasses that protection
