@@ -47,6 +47,14 @@ end
 function M.apply(config, wezterm)
   wezterm.GLOBAL.last_active_pane = wezterm.GLOBAL.last_active_pane or {}
 
+  -- wezterm.GLOBAL persists across config reloads. Entries can reference
+  -- window_ids / pane_ids that no longer exist, or (worse) window_ids
+  -- whose ID got reused for a fresh window. Reset on reload — the
+  -- update-status tick will repopulate within ~1s.
+  wezterm.on("window-config-reloaded", function(_)
+    wezterm.GLOBAL.last_active_pane = {}
+  end)
+
   -- Decision handler: fired whenever CLAUDE_WAITING flips via OSC 1337.
   wezterm.on("user-var-changed", function(window, pane, name, value)
     if name ~= "CLAUDE_WAITING" then return end
