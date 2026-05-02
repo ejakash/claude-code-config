@@ -22,7 +22,7 @@ This repo holds Claude Code configuration as independently-installable modules. 
 
 - **claude-waiting-notification** — Stop-hook + WezTerm Lua + Windows toast for idle Claude Code sessions. Requires WSL2 + WezTerm + Win11.
   `<TBD: github URL once published>`
-- **auto-screenshot** — Window-aware screen capture skill for Windows hosts. Requires Windows + PowerShell.
+- **claude-auto-screenshot** — Window-aware screen capture skill for Windows hosts. Requires Windows + PowerShell.
   `<TBD: github URL once published>`
 - **spawn-session** — Fan a batch of independent tasks into N Claude Code processes, each in its own WezTerm pane. Requires WezTerm + Claude Code.
   `<TBD: github URL once published>`
