@@ -66,6 +66,5 @@
     }
   },
   "autoUpdatesChannel": "latest",
-  "skipDangerousModePermissionPrompt": true,
   "model": "haiku"
 }
