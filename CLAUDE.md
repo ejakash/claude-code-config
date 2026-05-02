@@ -1,7 +1,5 @@
 # CLAUDE.md
 
-> This mirrors `AGENTS.md` (the primary source) for Claude Code compatibility. Keep both files in sync.
-
 ## What This Repo Is
 
 A curated reference for Claude Code (`~/.claude/`) configuration, shared across machines (personal and work PCs). It is **not a deployment pipeline** — nothing gets overwritten without explicit user confirmation.
@@ -20,7 +18,7 @@ When applying any change from this repo to a machine, or contributing a machine'
 ## File Structure
 
 ```
-AGENTS.md / CLAUDE.md       — this file (agent instructions for this repo)
+CLAUDE.md                   — this file (agent instructions for this repo)
 SETUP-GUIDE.md              — how to bootstrap a fresh machine
 CHANGELOG-SUMMARY.md        — index of all changelogs
 changelogs/                 — one file per change (CHANGELOG-YYYY-MM-DD-title.md)
@@ -128,6 +126,8 @@ Use suffixed copies rather than a single file with massive conditional sections:
 - `rules/dotnet-personal.md` and `rules/dotnet-work.md` instead of one heavily-commented `dotnet.md`
 - The changelog for each describes which to deploy to `~/.claude/rules/dotnet.md` on that machine
 
-## Never Commit Runtime State
+## What to Commit vs. What Not to Commit
 
-`.gitignore` covers it, but explicitly: `history.jsonl`, `.credentials.json`, `sessions/`, `tasks/`, `plans/`, `projects/`, `cache/`, `telemetry/`, and all other runtime dirs are never staged. Only curated files under `config/` get committed.
+**Okay to commit** — curated config files: everything under `config/` (skills, hooks, settings, rules, scripts), changelogs, and this file. These are the point of the repo.
+
+**Never commit** runtime state — `.gitignore` covers it, but explicitly: `history.jsonl`, `.credentials.json`, `sessions/`, `tasks/`, `plans/`, `projects/`, `cache/`, `telemetry/`, and all other runtime-generated dirs. These are machine-local and ephemeral.
