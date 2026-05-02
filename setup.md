@@ -4,8 +4,8 @@ This repo holds Claude Code configuration as independently-installable modules. 
 
 ## Per-machine values (collected once up front)
 
-- `<WSL_USER>` — your WSL username
-- `<WIN_USER>` — your Windows username
+- `<LINUX_USER>` — your WSL username
+- `<WINDOWS_USER>` — your Windows username
 - `<TIMEZONE>` — your local TZ (e.g. `America/Chicago`)
 
 ## Modules

@@ -4,7 +4,7 @@
 
 ## Per-machine values
 
-- `<WIN_USER>` — your Windows username; appears in the screenshot folder path inside this `CLAUDE.md`.
+- `<WINDOWS_USER>` — your Windows username; appears in the screenshot folder path inside this `CLAUDE.md`.
 
 ## Files
 
@@ -12,7 +12,7 @@
 
 ## Install
 
-1. If `~/.claude/CLAUDE.md` does not exist: `sed 's|<WINDOWS_USER>|<YOUR_WIN_USER>|g' CLAUDE.md > ~/.claude/CLAUDE.md`
+1. If `~/.claude/CLAUDE.md` does not exist: `sed 's|<WINDOWS_USER>|<WINDOWS_USER>|g' CLAUDE.md > ~/.claude/CLAUDE.md`
 2. If it exists: merge sections. Sections in this module that are absent from the user's existing file get appended; conflicts get presented to the user.
 
 ## Verify
