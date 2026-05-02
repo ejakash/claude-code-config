@@ -1,21 +1,7 @@
-# Per-machine reviewed-changelog tracking (never commit — it's local state)
-.changelog-status
+# Per-machine Claude Code state — never commit
+.claude/
 
-# Claude Code runtime state — never commit these
-config/history.jsonl
-config/backups/
-config/cache/
-config/downloads/
-config/file-history/
-config/mcp-needs-auth-cache.json
-config/paste-cache/
-config/plans/
-config/plugins/
-config/projects/
-config/session-env/
-config/sessions/
-config/shell-snapshots/
-config/subagents/
-config/tasks/
-config/telemetry/
-config/.credentials.json
+# Stale leftover from the old changelog-status sync model (now replaced
+# by the synced-on-<hostname> git tag). If this file appears, it's
+# git-ignored and harmless.
+.changelog-status
