@@ -26,7 +26,7 @@ Do not be confused by these substitutions. Interpret commands as the user intend
 
 ## Screenshots
 
-The user's screenshots folder is `C:\Users\spirit\Pictures\Screenshots` (WSL path: `/mnt/c/Users/spirit/Pictures/Screenshots`). <!-- edit per machine: Windows username (spirit) -->
+The user's screenshots folder is `C:\Users\<WINDOWS_USER>\Pictures\Screenshots` (WSL path: `/mnt/c/Users/<WINDOWS_USER>/Pictures/Screenshots`). <!-- edit per machine: Windows username -->
 
 - When the user says **"look at the screenshot"** or **"look at the last screenshot"** → read the **1 most recent** file from that folder.
 - When the user says **"look at the last two screenshots"** → read the **2 most recent** files.

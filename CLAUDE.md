@@ -35,7 +35,7 @@ Fallbacks if the tag is missing: `ORIG_HEAD` after a fresh pull, `git reflog`, o
 
 ## Per-machine values
 
-Files in modules use literal source-machine values (e.g. `pudge`, `spirit`, `America/Chicago`) with `<-- edit per machine: <what>` markers (or `// edit per machine: <what>` in JSON). The agent substitutes at deploy time.
+Files in modules use `<-- edit per machine: <what>` markers (or `// edit per machine: <what>` in JSON) to indicate values that must be substituted per machine. The agent substitutes at deploy time.
 
 ## Adding a new module
 

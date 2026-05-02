@@ -4,8 +4,8 @@ This repo holds Claude Code configuration as independently-installable modules. 
 
 ## Per-machine values (collected once up front)
 
-- `<WSL_USER>` — your WSL username (e.g. `pudge`)
-- `<WIN_USER>` — your Windows username (e.g. `spirit`)
+- `<WSL_USER>` — your WSL username
+- `<WIN_USER>` — your Windows username
 - `<TIMEZONE>` — your local TZ (e.g. `America/Chicago`)
 
 ## Modules
@@ -24,14 +24,14 @@ This repo holds Claude Code configuration as independently-installable modules. 
   https://github.com/ejakash/claude-waiting-notification
 - **claude-auto-screenshot** — Window-aware screen capture skill for Windows hosts. Requires Windows + PowerShell.
   https://github.com/ejakash/claude-auto-screenshot
-- **spawn-session** — Fan a batch of independent tasks into N Claude Code processes, each in its own WezTerm pane. Requires WezTerm + Claude Code.
-  https://github.com/ejakash/spawn-session
+- **claude-parallel-sessions** — Fan a batch of independent tasks into N Claude Code processes, each in its own WezTerm pane. Requires WezTerm + Claude Code.
+  https://github.com/ejakash/claude-parallel-sessions
 
 ## Sync
 
 After `git pull`, ask the agent to "sync" / "update" this repo. Sync state is a machine-local git tag `synced-on-<hostname>`:
 
-- Tag exists → agent shows `git log synced-on-<hostname>..HEAD --stat` (substitute your actual hostname, e.g. `synced-on-navi`), walks per-module deltas, applies what you accept, then `git tag -f synced-on-<hostname>` at HEAD. If a module was removed upstream, the agent will ask before removing anything from your machine — declined modules don't get re-offered.
+- Tag exists → agent shows `git log synced-on-<hostname>..HEAD --stat` (substitute your actual hostname, e.g. `synced-on-<HOSTNAME>`), walks per-module deltas, applies what you accept, then `git tag -f synced-on-<hostname>` at HEAD. If a module was removed upstream, the agent will ask before removing anything from your machine — declined modules don't get re-offered.
 - Tag missing (fresh clone) → agent treats as fresh setup and walks the module menu above.
 
 The tag is local-only (tags don't push by default). User-driven `git pull` outside the agent is fine — the tag still points at the last commit you actually synced.

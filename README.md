@@ -12,4 +12,4 @@ Read `setup.md`. The agent walks the module menu with you on a fresh machine; on
 - `statusline/` — two-line Tokyo Night status bar
 - `claude-md/` — global agent instructions
 
-Cross-cutting tools (own repos): `claude-waiting-notification`, `claude-auto-screenshot`, `spawn-session`. See `setup.md` "See also" for links.
+Cross-cutting tools (own repos): `claude-waiting-notification`, `claude-auto-screenshot`, `claude-parallel-sessions`. See `setup.md` "See also" for links.
