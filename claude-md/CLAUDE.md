@@ -33,7 +33,3 @@ The user's screenshots folder is `C:\Users\spirit\Pictures\Screenshots` (WSL pat
 - When the user says **"look at the last screenshots"** (plural, no number) → read all files modified within the **last 2 minutes**.
 - Determine recency by file modification time (use `ls -t` or Glob sorted by modification time).
 - **Only read the exact number of files requested.** Do not read additional files from this folder — the folder contains all Windows screenshots and most will be irrelevant to the current conversation.
-
-## .NET Code Quality
-
-When working on .NET projects (any .sln/.slnx), use ReSharper CLI for code analysis. See `~/.claude/rules/dotnet.md` for detailed usage.

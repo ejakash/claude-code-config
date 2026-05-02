@@ -31,7 +31,7 @@ This repo holds Claude Code configuration as independently-installable modules. 
 
 After `git pull`, ask the agent to "sync" / "update" this repo. Sync state is a machine-local git tag `synced-on-<hostname>`:
 
-- Tag exists → agent shows `git log synced-on-<hostname>..HEAD --stat`, walks per-module deltas, applies what you accept, then `git tag -f synced-on-<hostname>` at HEAD.
-- Tag missing (fresh clone) → agent treats as fresh setup and walks the module menu above.
+- Tag exists → agent shows `git log synced-on-<hostname>..HEAD --stat` (substitute your actual hostname, e.g. `synced-on-navi`), walks per-module deltas, applies what you accept, then `git tag -f synced-on-<hostname>` at HEAD.
+- Tag missing (fresh clone) → agent treats as fresh setup and walks the module menu above. If a module was removed upstream, the agent will ask before removing anything from your machine — declined modules don't get re-offered.
 
 The tag is local-only (tags don't push by default). User-driven `git pull` outside the agent is fine — the tag still points at the last commit you actually synced.

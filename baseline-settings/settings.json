@@ -122,7 +122,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bash /home/pudge/.claude/statusline-command.sh"
+    "command": "bash /home/pudge/.claude/statusline-command.sh" // <-- edit per machine: WSL username (pudge)
   },
   "enabledPlugins": {
     "superpowers@superpowers-marketplace": true,
