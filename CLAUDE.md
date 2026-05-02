@@ -1,133 +1,50 @@
-# CLAUDE.md
+# CLAUDE.md — agent instructions for working in this repo
 
-## What This Repo Is
+## What this repo is
 
-A curated reference for Claude Code (`~/.claude/`) configuration, shared across machines (personal and work PCs). It is **not a deployment pipeline** — nothing gets overwritten without explicit user confirmation.
+Module-style configuration for Claude Code (`~/.claude/`). Each top-level folder is one self-contained module. Cross-cutting tools live in their own sibling repos under `/mnt/d/labs/` — see `setup.md` "See also."
 
-The repo holds proven, refined settings. Changes bake on a live machine for a day or two first, then get contributed here. Other machines selectively adopt changes when ready.
+## Module shape
 
-## Core Principle: Merge, Not Overwrite
-
-When applying any change from this repo to a machine, or contributing a machine's change to this repo:
-
-- **Never copy files wholesale** without reviewing what's already there
-- **Always compare** `config/` (project) vs `~/.claude/` (machine) and present differences
-- **The user decides** what to adopt — for each diff, present it with a recommendation
-- **Path substitution** is the agent's job at apply time — ask for `YOUR_WSL_USER` and `YOUR_WIN_USER` when needed
-
-## File Structure
+Every module folder has:
 
 ```
-CLAUDE.md                   — this file (agent instructions for this repo)
-SETUP-GUIDE.md              — how to bootstrap a fresh machine
-CHANGELOG-SUMMARY.md        — index of all changelogs
-changelogs/                 — one file per change (CHANGELOG-YYYY-MM-DD-title.md)
-.changelog-status           — local per-machine reviewed-changelog list (git-ignored)
-config/                     — curated reference; mirrors ~/.claude/ layout
-  CLAUDE.md                 — global instructions
-  settings.json             — permissions, hooks, plugins, model
-  hooks/                    — PreToolUse / PostToolUse hook scripts
-  rules/                    — language-specific guidance files
-  scripts/                  — utility scripts (parse-sarif.py, etc.)
-  skills/                   — custom skill definitions
-  statusline-command.sh     — status bar script
+<module>/
+  README.md     human-facing intro
+  setup.md      install instructions; agent reads + acts
+  <files>       the actual config / scripts / skill files
 ```
 
-`config/` mirrors the `~/.claude/` path layout exactly so copy paths are predictable.
+`setup.md` is free prose. By soft convention each one carries a `**Requires:**` line (deps), a `## Per-machine values` section (substitution markers), a `## Files` section (where each file deploys), and `## Install` / `## Verify` steps.
 
-**Exception:** `config/windows-helpers/` holds Windows-side artifacts (PowerShell scripts, WezTerm Lua modules) that don't live under `~/.claude/` on any machine. They deploy to `C:\Users\<WIN_USER>\` on the Windows host. This is the documented exception to the mirror rule.
+## Sync model — `synced-on-<hostname>` git tag
 
-## Machine-Specific Values
+Per-machine, per-repo, machine-local. Tags don't push by default.
 
-Files in `config/` use `# <-- edit per machine: <what>` (or `//` for JSON) to mark values that differ between machines. When applying to a new machine, ask for:
+When the user says "sync" or "update":
 
-- `YOUR_WSL_USER` — WSL username (e.g. `pudge`) — appears in hook command paths and statusLine path in `settings.json`
-- `YOUR_WIN_USER` — Windows username (e.g. `spirit`) — appears in `rules/dotnet.md` (jb.exe path), `CLAUDE.md` (screenshot path), and `windows-helpers/claude-waiting.lua` (toast_script)
-- `YOUR_TIMEZONE` — local timezone for `statusline-command.sh` (e.g. `America/Chicago`)
-- `CLAUDE_AUMID` — Claude Desktop AppUserModelID (e.g. `Claude_pzs8sxrjxfjjc!Claude`, per-install hash) — appears in `windows-helpers/wezterm-claude-notify.ps1`. Discover via `powershell.exe Get-StartApps | ? Name -like '*Claude*'`, or run `config/windows-helpers/preflight.ps1`.
+1. `git tag --list 'synced-on-$(hostname)'` — exists?
+   - **Yes** → use as baseline, regardless of who ran the last `git pull`.
+   - **No** → fresh-setup flow: walk `setup.md` module menu.
+2. `git log <tag>..HEAD --stat` for the delta. Group by module folder. Walk per module.
+3. Per module, `git diff <tag>..HEAD -- <module>/`. Recommend, ask user yes/no/partial, apply, adapt paths/values.
+4. **Module deletion case:** if a module folder was removed upstream, surface "remove from this machine?" — do not silently leave stale files.
+5. On completion, `git tag -f synced-on-$(hostname)` at HEAD. Advance even on partial accept; declined modules don't auto-re-offer.
 
-Perform `sed` substitution before merging — do not commit machine-specific values.
+Fallbacks if the tag is missing: `ORIG_HEAD` after a fresh pull, `git reflog`, or ask the user "what's the last commit you synced?"
 
-## Changelog Tags
+## Per-machine values
 
-- **`[core]`** — agent strongly recommends on every machine; still confirms before applying
-- **`[optional]`** — agent presents neutrally; recommendation depends on machine context
+Files in modules use literal source-machine values (e.g. `pudge`, `spirit`, `America/Chicago`) with `<-- edit per machine: <what>` markers (or `// edit per machine: <what>` in JSON). The agent substitutes at deploy time.
 
-Both tags require user confirmation. Nothing applies automatically.
+## Adding a new module
 
-## Changelog File Format
+1. Create `<new-module>/` folder.
+2. Add `README.md` + `setup.md` (use neighbors as a template — Cat-1 free prose).
+3. Drop files in.
+4. Update top-level `setup.md` module table.
+5. Commit. Other machines pick it up on next sync.
 
-```markdown
-# CHANGELOG-YYYY-MM-DD-short-title
+## Removing a module
 
-**Date:** YYYY-MM-DD
-**Tag:** [core] or [optional]
-**Summary:** One sentence describing the change.
-
-## Goal
-
-What problem this solves or what improvement it makes.
-
-## Change
-
-Exact files modified, values added/changed, with enough detail to reproduce on another machine.
-Note any `<-- edit per machine` values.
-
-## Deployment
-
-Steps to apply this change on a new machine (agent-runnable where possible).
-
-## Verification
-
-How to confirm the change is working.
-```
-
-## Workflow: Making a Change (machine → project)
-
-The user refines a change on a live machine, then asks the agent to capture it.
-
-1. Agent reads `~/.claude/` (live) and `config/` (project) — identifies the difference
-2. Agent proposes changelog content with goal, exact change, and `<-- edit per machine` markers
-3. User reviews and approves
-4. Agent updates `config/` to match the live state
-5. Agent creates `changelogs/CHANGELOG-YYYY-MM-DD-title.md`
-6. Agent updates `CHANGELOG-SUMMARY.md` (add entry at bottom)
-7. Agent adds changelog filename to `.changelog-status` on this machine
-8. User commits
-
-## Workflow: Applying Changes (project → machine)
-
-Run after `git pull` to bring a machine up to date.
-
-1. Agent reads `.changelog-status` (reviewed list) and `CHANGELOG-SUMMARY.md` (full list)
-2. Identifies changelogs not yet in `.changelog-status` — these are new
-3. For each new changelog in order:
-   - Agent reads the changelog and summarizes: what it does, why, relevant files
-   - Presents recommendation (`[core]` = strong yes, `[optional]` = context-dependent reasoning)
-   - For file changes: shows the specific diff between `config/` and `~/.claude/`
-   - User: yes / no / partial
-   - If yes: agent performs merge (adapts paths to this machine's values)
-   - Adds changelog filename to `.changelog-status` regardless of decision
-4. Done when no new changelogs remain
-
-## Workflow: Bootstrapping a Fresh Machine
-
-Follow `SETUP-GUIDE.md`. High level:
-
-1. Clone repo, establish machine identity (WSL username, Windows username, timezone)
-2. If Claude Code already configured: run the Apply workflow above — the agent presents each `[core]` and `[optional]` changelog for selective adoption
-3. If truly fresh (no `~/.claude/`): agent walks `config/` file by file, adapts paths, applies with confirmation
-4. Initialize `.changelog-status` with all existing changelog filenames marked as reviewed
-
-## When a File Diverges Significantly Between Machines
-
-Use suffixed copies rather than a single file with massive conditional sections:
-
-- `rules/dotnet-personal.md` and `rules/dotnet-work.md` instead of one heavily-commented `dotnet.md`
-- The changelog for each describes which to deploy to `~/.claude/rules/dotnet.md` on that machine
-
-## What to Commit vs. What Not to Commit
-
-**Okay to commit** — curated config files: everything under `config/` (skills, hooks, settings, rules, scripts), changelogs, and this file. These are the point of the repo.
-
-**Never commit** runtime state — `.gitignore` covers it, but explicitly: `history.jsonl`, `.credentials.json`, `sessions/`, `tasks/`, `plans/`, `projects/`, `cache/`, `telemetry/`, and all other runtime-generated dirs. These are machine-local and ephemeral.
+Just `git rm -r <module>/`. The sync model handles cleanup on other machines (step 4 of sync above).
