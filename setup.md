@@ -12,7 +12,7 @@ This repo holds Claude Code configuration as independently-installable modules. 
 
 | Module | What it does | Requires |
 |---|---|---|
-| `baseline-settings/` | `~/.claude/settings.json` baseline (permissions, plugins, model, statusline pointer, agent-deck hooks) | Claude Code |
+| `baseline-settings/` | `~/.claude/settings.json` baseline (permissions, plugins, model, statusline pointer) | Claude Code |
 | `statusline/` | Two-line Tokyo Night status bar | Claude Code, bash |
 | `claude-md/` | Global agent instructions in `~/.claude/CLAUDE.md` | Claude Code |
 
