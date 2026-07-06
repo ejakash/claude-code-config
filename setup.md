@@ -15,6 +15,7 @@ This repo holds Claude Code configuration as independently-installable modules. 
 | `baseline-settings/` | `~/.claude/settings.json` baseline (permissions, plugins, model, statusline pointer) | Claude Code |
 | `statusline/` | Two-line Tokyo Night status bar | Claude Code, bash |
 | `claude-md/` | Global agent instructions in `~/.claude/CLAUDE.md` | Claude Code |
+| `rules/` | Path-scoped language rules (`~/.claude/rules/`) + SARIF parser script | Claude Code; `dotnet.md` needs ReSharper CLI via WSL interop |
 
 **Ordering:** install `baseline-settings` and `statusline` before any cross-cutting module that registers hooks in `settings.json` (e.g. `claude-waiting-notification`).
 
