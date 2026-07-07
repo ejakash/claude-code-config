@@ -20,6 +20,10 @@ d = json.load(sys.stdin)
 m = d.get('model', {}).get('display_name', '?')
 cwd = d.get('cwd', '')
 dn = cwd.rsplit('/', 1)[-1] if cwd else '~'
+# free-text fields: strip the field separator + newlines so they can't
+# shift fields in the shell-side IFS='|' read
+m  = str(m).replace('|', ' ').replace('\n', ' ')
+dn = str(dn).replace('|', ' ').replace('\n', ' ')
 
 cw = d.get('context_window', {})
 cu = cw.get('current_usage', {})
@@ -46,12 +50,12 @@ print(m, dn, in_tok, out_tok, cr, cc, used_pct, ctx_total, fh, sd, fh_r, sd_r, d
 # --- Helpers ---
 fmt_tokens() {
   local n=${1:-0}
-  awk "BEGIN {
-    v = $n + 0
-    if (v >= 1000000) printf \"%.1fM\", v/1000000
-    else if (v >= 1000) printf \"%.1fK\", v/1000
-    else printf \"%d\", v
-  }"
+  awk -v n="$n" 'BEGIN {
+    v = n + 0
+    if (v >= 1000000) printf "%.1fM", v/1000000
+    else if (v >= 1000) printf "%.1fK", v/1000
+    else printf "%d", v
+  }'
 }
 
 fmt_duration() {
@@ -96,7 +100,7 @@ fmt_7d_reset() {
 
 fmt_cost() {
   local usd=${1:-0}
-  awk "BEGIN { printf \"\044%.2f\", $usd + 0 }"
+  awk -v u="$usd" 'BEGIN { printf "$%.2f", u + 0 }'
 }
 
 # Gradient progress bar: shifts dark-to-bright across filled portion
@@ -104,7 +108,7 @@ make_gradient_bar() {
   local pct=$1 width=10
   local filled=0
   if [ -n "$pct" ] && [ "$pct" != "None" ] && [ "$pct" != "" ]; then
-    filled=$(awk "BEGIN { v=int($pct * $width / 100 + 0.5); if(v>$width) v=$width; if(v<0) v=0; print v }")
+    filled=$(awk -v p="$pct" -v w="$width" 'BEGIN { v=int(p * w / 100 + 0.5); if(v>w) v=w; if(v<0) v=0; print v }')
   fi
   local empty=$((width - filled))
   local bar=""
@@ -134,7 +138,7 @@ five_h_reset_fmt=$(fmt_5h_reset "$five_h_resets")
 seven_d_reset_fmt=$(fmt_7d_reset "$seven_d_resets")
 
 if [ -n "$ctx_used_pct" ] && [ "$ctx_used_pct" != "None" ] && [ "${ctx_total:-0}" -gt 0 ] 2>/dev/null; then
-  ctx_used_raw=$(awk "BEGIN { printf \"%d\", $ctx_used_pct * $ctx_total / 100 }")
+  ctx_used_raw=$(awk -v p="$ctx_used_pct" -v t="$ctx_total" 'BEGIN { printf "%d", p * t / 100 }')
   ctx_used_fmt=$(fmt_tokens "$ctx_used_raw")
   ctx_total_fmt=$(fmt_tokens "$ctx_total")
   ctx_str="${ctx_used_fmt} / ${ctx_total_fmt}"

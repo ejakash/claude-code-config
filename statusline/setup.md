@@ -5,7 +5,7 @@
 ## Per-machine values
 
 - `<LINUX_USER>` — your WSL username (appears in `~/.claude/settings.json` `statusLine.command`, not in this script itself)
-- `<TIMEZONE>` — your local TZ (e.g. `America/Chicago`); appears 4 times in `statusline-command.sh`
+- `<TIMEZONE>` — your local TZ; the script ships with the literal `America/Chicago` (4 occurrences in `statusline-command.sh`, each marked `edit per machine`)
 
 ## Files
 
@@ -14,7 +14,7 @@
 ## Install
 
 1. `cp statusline-command.sh ~/.claude/statusline-command.sh`
-2. Substitute `<TIMEZONE>` (sed `s|America/Chicago|<TIMEZONE>|g ~/.claude/statusline-command.sh`).
+2. Substitute your timezone for the shipped `America/Chicago` literal (e.g. `sed -i 's|America/Chicago|Europe/Berlin|g' ~/.claude/statusline-command.sh`).
 3. `chmod +x ~/.claude/statusline-command.sh`
 4. Confirm `~/.claude/settings.json` `statusLine.command` references `bash /home/<LINUX_USER>/.claude/statusline-command.sh`. (`baseline-settings` does this by default.)
 
